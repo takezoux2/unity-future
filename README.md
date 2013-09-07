@@ -40,7 +40,7 @@ Threadを使っているライブラリと協調が簡単にできます。
     
             Future<string> f = ...// Get future class using thread.
       
-            StartCoroutine(f.CoWati( result => {
+            StartCoroutine(f.CoWait( result => {
                 if(result.Success){
                     string r = result.Result;
                     // do you success action.
