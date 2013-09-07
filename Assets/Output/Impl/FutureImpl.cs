@@ -19,15 +19,17 @@ namespace GeishaTokyo.Concurrent.Impl
 		
 		public FutureImpl ()
 		{
+			done = false;
+			success = false;
 		}
 		
 		public void SetResult (T v)
 		{
 			if(done) throw new NotAllowedOperationException("Can't set result after done");
 			else{
-				done = true;
-				success = true;
 				result = v;
+				success = true;
+				done = true;
 				FireComplete();
 			}
 		}
@@ -36,9 +38,9 @@ namespace GeishaTokyo.Concurrent.Impl
 		{
 			if(done) throw new NotAllowedOperationException("Can't set result after done");
 			else{
-				done = true;
-				success = false;
 				error = e;
+				success = false;
+				done = true;
 				FireComplete();
 			}
 		}
@@ -202,7 +204,7 @@ namespace GeishaTokyo.Concurrent.Impl
 			this.OnComplete( f1 => {
 				if(future.Done){
 					if(future.Success && this.Success){
-						f.SetResult(Tuples.Tuple(this.result,future.Result));
+						f.SetResult(Tuples.Tuple(this.result,future.Get()));
 					}else if(future.Success && this.HasError){
 						f.SetError(this.error);
 					}else if(future.HasError && this.Success){
@@ -215,7 +217,7 @@ namespace GeishaTokyo.Concurrent.Impl
 			future.OnComplete(f2 => {
 				if(this.Done){
 					if(future.Success && this.Success){
-						f.SetResult(Tuples.Tuple(this.result,future.Result));
+						f.SetResult(Tuples.Tuple(this.result,future.Get()));
 					}else if(future.Success && this.HasError){
 						f.SetError(this.error);
 					}else if(future.HasError && this.Success){
