@@ -14,6 +14,7 @@ namespace GeishaTokyo.Concurrent.Impl
 		T result;
 		Exception error;
 		volatile bool done;
+		volatile bool success;
 		
 		
 		public FutureImpl ()
@@ -25,6 +26,7 @@ namespace GeishaTokyo.Concurrent.Impl
 			if(done) throw new NotAllowedOperationException("Can't set result after done");
 			else{
 				done = true;
+				success = true;
 				result = v;
 				FireComplete();
 			}
@@ -35,6 +37,7 @@ namespace GeishaTokyo.Concurrent.Impl
 			if(done) throw new NotAllowedOperationException("Can't set result after done");
 			else{
 				done = true;
+				success = false;
 				error = e;
 				FireComplete();
 			}
@@ -44,15 +47,24 @@ namespace GeishaTokyo.Concurrent.Impl
 
 		public T Result {
 			get {
-				return Get (DefaultTimeoutSec);
+				if(!done){
+					throw new NotAllowedOperationException("Can't get result before done");
+				}
+				if(!success){
+					throw new NotAllowedOperationException("Can't get result from not succeeded future");
+				}
+				return result;
 			}
 		}
 
 		public Exception Error {
 			get {
-				Wait(DefaultTimeoutSec);
-				if(error == null){
-					throw new NotAllowedOperationException("Can't get error from succeeded future");
+				
+				if(!done){
+					throw new NotAllowedOperationException("Can't get error before done");
+				}
+				if(success){
+					throw new NotAllowedOperationException("Can't get result from succeeded future");
 				}
 				return error;
 			}
@@ -66,7 +78,7 @@ namespace GeishaTokyo.Concurrent.Impl
 		
 		public bool Success {
 			get {
-				return result != null;
+				return done && success;
 			}
 		}
 		
@@ -75,7 +87,7 @@ namespace GeishaTokyo.Concurrent.Impl
 
 		public bool HasError {
 			get {
-				return error != null;
+				return done && !success;
 			}
 		}
 		public Future<T> Wait ()
