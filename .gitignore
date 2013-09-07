@@ -1,0 +1,34 @@
+# Unity 
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+
+# Unity?
+*.pidb
+*.csproj
+*.unityproj
+*.booproj
+
+# Mac
+*.DS_Store
+
+# Unity? MonoDevelop?
+*.svd
+*.user
+*.userprefs
+*.userprefs.meta
+*.suo
+*.sln
+*.sln.meta
+*.orig.meta
+
+# sublime
+*.sublime-project
+*.sublime-workspace
+
+#others
+xcode/
+*.orig
+.*.sw[a-z]
+*~
+
