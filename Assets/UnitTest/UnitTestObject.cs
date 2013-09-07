@@ -28,7 +28,6 @@ public class UnitTestObject : MonoBehaviour
 	
 	void CallFuture()
 	{
-		
 		StartCoroutine(future.CoComplete( r => {
 			Debug.Log ("Coroutine is called!");
 			// to check to be able to call Unity methods.

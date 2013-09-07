@@ -65,6 +65,68 @@ namespace GeishaTokyo.Concurrent.Test
 			Assert.False(true,"Never called" + r);
 			
 		}
+		
+		[UnitTest]
+		public void TestCallbacks(){
+			var f = FutureFactory.NewFuture<string>();
+			string resultString = "Success!";
+			bool[] calls = new bool[3];
+			f.OnComplete( r => {
+				Assert.True(r.Success);
+				Assert.False(r.HasError);
+				Assert.Equals(resultString,r.Result);
+				calls[0] = true;
+			});
+			f.OnSuccess( r => {
+				
+				Assert.Equals(resultString,r);
+				calls[1] = true;
+			});
+			
+			f.OnError( e => {
+				Assert.False(true,"Never called");
+				calls[2] = false;
+			});
+			
+			// inform result
+			f.SetResult(resultString);
+			
+			Assert.True(calls[0]);
+			Assert.True(calls[1]);
+			Assert.False(calls[2]);
+		}
+		[UnitTest]
+		public void TestCallbacksSetAfterDone(){
+			var f = FutureFactory.NewFuture<string>();
+			string resultString = "Success!";
+			
+			// inform result
+			f.SetResult(resultString);
+			
+			
+			bool[] calls = new bool[3];
+			f.OnComplete( r => {
+				Assert.True(r.Success);
+				Assert.False(r.HasError);
+				Assert.Equals(resultString,r.Result);
+				calls[0] = true;
+			});
+			f.OnSuccess( r => {
+				
+				Assert.Equals(resultString,r);
+				calls[1] = true;
+			});
+			
+			f.OnError( e => {
+				Assert.False(true,"Never called");
+				calls[2] = false;
+			});
+			
+			
+			Assert.True(calls[0]);
+			Assert.True(calls[1]);
+			Assert.False(calls[2]);
+		}
 	}
 }
 

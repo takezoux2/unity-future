@@ -11,7 +11,7 @@ using UnityEditor;
 /// 
 /// To run test, execute from console at project root directory.
 /// <pre>
-/// /Applications/Unity/Unity.app/Contents/MacOS/Unity -quit -batchmode -executeMethod TestEntryPoint.RunAllTests
+/// /Applications/Unity/Unity.app/Contents/MacOS/Unity -quit -batchmode -executeMethod TestEntryPoint.RunAllTests -logfile TestReports/log.txt
 /// </pre>
 /// Test reports are exported to {project_root}/TestReports directory.
 /// 
