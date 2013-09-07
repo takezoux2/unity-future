@@ -68,6 +68,72 @@ namespace GeishaTokyo.Concurrent.Test
 			Assert.Equals(e,f2.Error);
 		}
 		
+		[UnitTest]
+		public void TestSelect(){
+			
+			
+			// success x success
+			{
+				var f1 = FutureFactory.NewFuture<string>();
+				var f2 = FutureFactory.NewFuture<string>();
+				
+				var sel = f1.Select(f2);
+				
+				Assert.False(sel.Done);
+				f1.SetResult("ok1");
+				Assert.True(sel.Done);
+				f2.SetResult("ok2");
+				Assert.True(sel.Done);
+				Assert.Equals("ok1",sel.Result);
+			}
+			
+			
+			// error x success
+			{
+				var f1 = FutureFactory.NewFuture<string>();
+				var f2 = FutureFactory.NewFuture<string>();
+				
+				var sel = f1.Select(f2);
+				
+				Assert.False(sel.Done);
+				f1.SetError(new Exception());
+				Assert.False(sel.Done);
+				f2.SetResult("ok2");
+				Assert.True(sel.Done);
+				Assert.Equals("ok2",sel.Result);
+			}
+			
+			
+			// success x error
+			{
+				var f1 = FutureFactory.NewFuture<string>();
+				var f2 = FutureFactory.NewFuture<string>();
+				
+				var sel = f1.Select(f2);
+				
+				Assert.False(sel.Done);
+				f1.SetResult("ok1");
+				Assert.True(sel.Done);
+				f2.SetError(new Exception());
+				Assert.True(sel.Done);
+				Assert.Equals("ok1",sel.Result);
+			}
+			// error x error
+			{
+				var f1 = FutureFactory.NewFuture<string>();
+				var f2 = FutureFactory.NewFuture<string>();
+				
+				var sel = f1.Select(f2);
+				
+				Assert.False(sel.Done);
+				f1.SetError(new Exception());
+				Assert.False(sel.Done);
+				f2.SetError(new Exception());
+				Assert.True(sel.Done);
+				Assert.Equals(new MultiException(f1.Error,f2.Error),sel.Error);
+			}
+			
+		}
 		
 	}
 }

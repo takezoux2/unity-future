@@ -94,6 +94,14 @@ namespace GeishaTokyo.Concurrent{
 		/// </typeparam>
 		Future<Tuple2<T,T2>> Join<T2>(Future<T2> future);
 		
+		/// <summary>
+		/// Return first returned result.
+		/// </summary>
+		/// <param name='future'>
+		/// Future.
+		/// </param>
+		Future<T> Select(Future<T> future);
+		
 		#region For unity
 		/// <summary>
 		/// Wait using Coroutine.

@@ -231,6 +231,31 @@ namespace GeishaTokyo.Concurrent.Impl
 			return f;
 		}
 		
+		public Future<T> Select(Future<T> future)
+		{
+			var f = new FutureImpl<T>();
+			this.OnComplete( r => {
+				if(!f.Done){
+					if(r.Success) f.SetResult(r.Result);
+					else {
+						if(future.HasError){
+							f.SetError(new MultiException(future.Error,this.Error));
+						}
+					}
+				}
+			});
+			future.OnComplete(r => {
+				if(!f.Done){
+					if(r.Success) f.SetResult(r.Result);
+					else {
+						if(this.HasError){
+							f.SetError(new MultiException(this.Error,future.Error));
+						}
+					}
+				}
+			});
+			return f;
+		}
 		
 		
 		public System.Collections.IEnumerator CoComplete (Action<Result<T>> callback)
